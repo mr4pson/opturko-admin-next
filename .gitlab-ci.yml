@@ -1,0 +1,60 @@
+# This file is a template, and might need editing before it works on your project.
+# To contribute improvements to CI/CD templates, please follow the Development guide at:
+# https://docs.gitlab.com/ee/development/cicd/templates.html
+# This specific template is located at:
+# https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/npm.gitlab-ci.yml
+
+default:
+  image: node:latest
+
+# add 'node_modules' to cache for speeding up builds
+cache: &global_cache
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - node_modules/ # Node modules and dependencies
+
+stages:
+  - prepare
+  - test
+  - build
+  - deploy
+
+prepare:deps:
+  stage: prepare
+  script:
+    - yarn install
+    - yarn next telemetry disable
+  cache:
+    <<: *global_cache
+    policy: push
+  only:
+    - merge_requests
+    - master
+
+test:build:
+  stage: test
+  script:
+    - yarn run build
+  cache:
+    <<: *global_cache
+    policy: pull
+  only:
+    - merge_requests
+    - master
+
+pages:
+  stage: deploy
+  script:
+    - yarn run build
+    - yarn next export
+    - rm -rf public
+    - mv out public
+  artifacts:
+    paths:
+      - public
+    expire_in: 1 week
+  only:
+    - master
+  cache:
+    <<: *global_cache
+    policy: pull
