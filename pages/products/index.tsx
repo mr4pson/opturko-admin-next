@@ -2,6 +2,10 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { SECTIONS } from '../../components/categories/constants';
+import { PageTitle } from '../../components/common';
+import AdminLayout from '../../components/layouts/admin';
+import { handleSignout } from '../../components/layouts/admin/helpers';
 import { COLUMNS } from '../../components/products/constants';
 import {
   handleChangeClick,
@@ -10,19 +14,20 @@ import {
   handleCreateClick,
   handleDeleteClick,
 } from '../../components/products/helpers';
-import { PageTitle } from '../../components/common';
-import AdminLayout from '../../components/layouts/admin';
-import { handleSignout } from '../../components/layouts/admin/helpers';
 import BreadCrumbs from '../../components/ui-kit/Breadcrumbs';
 import Button from '../../components/ui-kit/Button';
 import DataGrid from '../../components/ui-kit/DataGrid';
 import Modal from '../../components/ui-kit/Modal';
+import Select from '../../components/ui-kit/Select';
+import { SelectItem } from '../../components/ui-kit/Select/types';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import { fetchCategoriesBySection } from '../../redux/slicers/categorySlicer';
 import {
   clearProducts,
   fetchProducts,
+  fetchProductsByCategory,
 } from '../../redux/slicers/productSlicer';
-import { TProductsState } from '../../redux/types';
+import { TCategoriesState, TProductsState } from '../../redux/types';
 import { Product } from '../../swagger/autogen';
 
 const ProductsPage = (): JSX.Element => {
@@ -32,6 +37,15 @@ const ProductsPage = (): JSX.Element => {
   const { products, loading } = useAppSelector<TProductsState>(
     (state) => state.products,
   );
+  const { categories } = useAppSelector<TCategoriesState>(
+    (state) => state.categories,
+  );
+  const categoryItems = categories.map((category) => ({
+    label: category.title,
+    value: category.id,
+  }));
+  const [section, setSection] = useState<string>();
+  const [category, setCategory] = useState<SelectItem>();
 
   useEffect(() => {
     setTimeout(() => {
@@ -49,6 +63,29 @@ const ProductsPage = (): JSX.Element => {
     });
   }, [dispatch]);
 
+  useEffect(() => {
+    if (section) {
+      dispatch(fetchCategoriesBySection(section));
+    }
+  }, [section]);
+
+  useEffect(() => {
+    if (category) {
+      dispatch(fetchProductsByCategory(category.value as number));
+    }
+  }, [category]);
+
+  const handleSectionChange = () => (value: string) => {
+    setSection(value);
+  };
+
+  const handleCategoryChange = () => (value: number) => {
+    const curCategory = categoryItems.find(
+      (category) => category.value === value,
+    );
+    setCategory(curCategory);
+  };
+
   return (
     <>
       <Head>
@@ -62,6 +99,21 @@ const ProductsPage = (): JSX.Element => {
         </Button>
       </PageTitle>
       <BreadCrumbs />
+      <FiltersWrapper>
+        <Select
+          items={SECTIONS}
+          placeholder={'Выберите секцию'}
+          style={{ width: '250px' }}
+          onChange={handleSectionChange()}
+        ></Select>
+        <Select
+          items={categoryItems}
+          value={category}
+          placeholder={'Выберите категорию'}
+          style={{ width: '250px' }}
+          onChange={handleCategoryChange()}
+        ></Select>
+      </FiltersWrapper>
       <DataGrid
         columns={COLUMNS}
         dataSource={products}
@@ -92,13 +144,20 @@ const ProductsPage = (): JSX.Element => {
   );
 };
 
-ProductsPage.PageLayout = AdminLayout;
-
 const LinkItem = styled.a`
   display: inline-block;
   padding: 5px 10px;
   color: #e62323;
   cursor: pointer;
 `;
+
+const FiltersWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 20px;
+`;
+
+ProductsPage.PageLayout = AdminLayout;
 
 export default ProductsPage;

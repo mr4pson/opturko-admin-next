@@ -17,6 +17,14 @@ export const fetchProducts = createAsyncThunk<
   return await ProductsService.getProducts();
 });
 
+export const fetchProductsByCategory = createAsyncThunk<
+  Product[],
+  number,
+  { rejectValue: string }
+>('products/fetchProductsByCategory', async function (payload) {
+  return await ProductsService.getProductsByCategory(payload);
+});
+
 export const fetchProduct = createAsyncThunk<
   Product,
   number,
@@ -83,6 +91,26 @@ const productSlicer = createSlice({
         console.log('fulfilled');
       })
       .addCase(fetchProducts.rejected, (state, action) => {
+        state.loading = false;
+        if (action.error.message === 'Unauthorized.') {
+          toast.error('Вы неавторизованы.', {
+            position: toast.POSITION.TOP_RIGHT,
+          });
+        } else {
+          toast.error('Ошибка на сервере. Обратитесь к администратору.', {
+            position: toast.POSITION.TOP_RIGHT,
+          });
+        }
+        console.log('rejected');
+      })
+      //fetchProducts
+      .addCase(fetchProductsByCategory.pending, handlePending)
+      .addCase(fetchProductsByCategory.fulfilled, (state, action) => {
+        state.products = action.payload;
+        state.loading = false;
+        console.log('fulfilled');
+      })
+      .addCase(fetchProductsByCategory.rejected, (state, action) => {
         state.loading = false;
         if (action.error.message === 'Unauthorized.') {
           toast.error('Вы неавторизованы.', {
