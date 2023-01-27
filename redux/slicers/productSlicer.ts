@@ -19,10 +19,14 @@ export const fetchProducts = createAsyncThunk<
 
 export const fetchProductsByCategory = createAsyncThunk<
   Product[],
-  number,
+  { id: number; priceFrom: number | undefined; priceTo: number | undefined },
   { rejectValue: string }
 >('products/fetchProductsByCategory', async function (payload) {
-  return await ProductsService.getProductsByCategory(payload);
+  return await ProductsService.getProductsByCategory(
+    payload.id,
+    payload.priceFrom,
+    payload.priceTo,
+  );
 });
 
 export const fetchProduct = createAsyncThunk<

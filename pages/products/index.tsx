@@ -17,6 +17,7 @@ import {
 import BreadCrumbs from '../../components/ui-kit/Breadcrumbs';
 import Button from '../../components/ui-kit/Button';
 import DataGrid from '../../components/ui-kit/DataGrid';
+import Input from '../../components/ui-kit/Input';
 import Modal from '../../components/ui-kit/Modal';
 import Select from '../../components/ui-kit/Select';
 import { SelectItem } from '../../components/ui-kit/Select/types';
@@ -34,6 +35,10 @@ const ProductsPage = (): JSX.Element => {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const [curProduct, setCurProduct] = useState<Product | null>(null);
+  const [section, setSection] = useState<string>();
+  const [category, setCategory] = useState<SelectItem>();
+  const [priceFrom, setPriceFrom] = useState<number>();
+  const [priceTo, setPriceTo] = useState<number>();
   const { products, loading } = useAppSelector<TProductsState>(
     (state) => state.products,
   );
@@ -44,8 +49,6 @@ const ProductsPage = (): JSX.Element => {
     label: category.title,
     value: category.id,
   }));
-  const [section, setSection] = useState<string>();
-  const [category, setCategory] = useState<SelectItem>();
 
   useEffect(() => {
     setTimeout(() => {
@@ -71,9 +74,15 @@ const ProductsPage = (): JSX.Element => {
 
   useEffect(() => {
     if (category) {
-      dispatch(fetchProductsByCategory(category.value as number));
+      dispatch(
+        fetchProductsByCategory({
+          id: category.value as number,
+          priceFrom,
+          priceTo,
+        }),
+      );
     }
-  }, [category]);
+  }, [category, priceFrom, priceTo]);
 
   const handleSectionChange = () => (value: string) => {
     setSection(value);
@@ -84,6 +93,14 @@ const ProductsPage = (): JSX.Element => {
       (category) => category.value === value,
     );
     setCategory(curCategory);
+  };
+
+  const handlePriceFromChange = () => (value: number | string) => {
+    setPriceFrom(+value);
+  };
+
+  const handlePriceToChange = () => (value: number | string) => {
+    setPriceTo(+value);
   };
 
   return (
@@ -113,6 +130,18 @@ const ProductsPage = (): JSX.Element => {
           style={{ width: '250px' }}
           onChange={handleCategoryChange()}
         ></Select>
+        <Input
+          width={200}
+          value={priceFrom ?? 0}
+          placeholder={'Цена от'}
+          onChange={handlePriceFromChange()}
+        />
+        <Input
+          width={200}
+          value={priceTo ?? 0}
+          placeholder={'Цена до'}
+          onChange={handlePriceToChange()}
+        />
       </FiltersWrapper>
       <DataGrid
         columns={COLUMNS}

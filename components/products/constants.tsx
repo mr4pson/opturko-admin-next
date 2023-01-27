@@ -11,9 +11,9 @@ const FORM_SCHEMA = Yup.object().shape({
   [ManageProductFormItemName.Price]: Yup.number()
     .min(1, 'Цена меньше 1')
     .required('Поле обязательно'),
-  [ManageProductFormItemName.Number]: Yup.number()
-    .min(1, 'Количество меньше 1')
-    .required('Поле обязательно'),
+  // [ManageProductFormItemName.Number]: Yup.number()
+  //   .min(1, 'Количество меньше 1')
+  //   .required('Поле обязательно'),
   [ManageProductFormItemName.Code]: Yup.number().required('Поле обязательно'),
   [ManageProductFormItemName.NumberInPack]: Yup.number()
     .min(1, 'Количество в упаковке меньше 1')
@@ -56,10 +56,10 @@ const COLUMNS: TDataGridCol<Product>[] = [
       <div>{moment(item.updatedAt).format('DD.MM.YYYY hh:mm:ss')}</div>
     ),
   },
-  {
-    field: 'number',
-    title: 'Количество',
-  },
+  // {
+  //   field: 'number',
+  //   title: 'Количество',
+  // },
   {
     field: 'code',
     title: 'Артикул',

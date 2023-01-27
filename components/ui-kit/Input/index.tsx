@@ -19,6 +19,7 @@ type Props = {
   readonly?: boolean;
   min?: number;
   max?: number;
+  placeholder?: string;
   field?: FieldInputProps<any>;
   form?: FormikProps<any>;
   meta?: FieldMetaProps<any>;
@@ -34,6 +35,7 @@ const Input: React.FC<Props & TFormFieldProps> = ({
   min,
   max,
   fullSize = false,
+  placeholder,
   readonly,
   width,
   value,
@@ -76,6 +78,7 @@ const Input: React.FC<Props & TFormFieldProps> = ({
           value={form?.values[field?.name!]}
           fullSize={fullSize}
           readOnly={readonly}
+          placeholder={placeholder}
           onChange={handleChange}
           fullHeight={!label}
         />
@@ -83,6 +86,7 @@ const Input: React.FC<Props & TFormFieldProps> = ({
       {type === 'tel' && (
         <InputPhone
           mask="+7(999) 999 99 99"
+          placeholder={placeholder}
           value={form?.values[field?.name!]}
           onChange={handleChange}
         />
@@ -93,6 +97,7 @@ const Input: React.FC<Props & TFormFieldProps> = ({
           decimalSeparator={','}
           inputMode="decimal"
           pattern={'[0-9].*'}
+          placeholder={placeholder}
           readOnly={readonly}
           value={form?.values[field?.name!]}
           onChange={handleNumberChange}

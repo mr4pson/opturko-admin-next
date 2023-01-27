@@ -39,7 +39,7 @@ const ManageProductForm = ({
   const dispatch = useAppDispatch();
   const initialValues = {
     price: product?.price,
-    number: product?.number,
+    // number: product?.number,
     code: product?.code,
     numberInPack: product?.numberInPack,
     sizes: product?.sizes,
@@ -87,13 +87,13 @@ const ManageProductForm = ({
               type={'number'}
               fullSize={true}
             />
-            <FormItem
+            {/* <FormItem
               title="Количество"
               name={ManageProductFormItemName.Number}
               component={Input}
               type={'number'}
               fullSize={true}
-            />
+            /> */}
             <FormItem
               title="Артикул"
               name={ManageProductFormItemName.Code}
