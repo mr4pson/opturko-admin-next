@@ -8,9 +8,7 @@ import styled from 'styled-components';
 import { getImageUrl } from '../../common/helpers';
 
 const FORM_SCHEMA = Yup.object().shape({
-  [ManageProductFormItemName.Price]: Yup.number()
-    .min(1, 'Цена меньше 1')
-    .required('Поле обязательно'),
+  [ManageProductFormItemName.Price]: Yup.number().required('Поле обязательно'),
   // [ManageProductFormItemName.Number]: Yup.number()
   //   .min(1, 'Количество меньше 1')
   //   .required('Поле обязательно'),
