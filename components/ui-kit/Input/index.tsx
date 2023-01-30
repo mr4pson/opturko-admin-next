@@ -72,7 +72,7 @@ const Input: React.FC<Props & TFormFieldProps> = ({
     <InputWrapper width={width} hasError={hasError}>
       <InputLabel>{label}</InputLabel>
       <InputCaptionValue>{captionValue}</InputCaptionValue>
-      {!['tel', 'number'].includes(type) && (
+      {
         <InputItem
           type={type}
           value={form?.values[field?.name!]}
@@ -82,27 +82,7 @@ const Input: React.FC<Props & TFormFieldProps> = ({
           onChange={handleChange}
           fullHeight={!label}
         />
-      )}
-      {type === 'tel' && (
-        <InputPhone
-          mask="+7(999) 999 99 99"
-          placeholder={placeholder}
-          value={form?.values[field?.name!]}
-          onChange={handleChange}
-        />
-      )}
-
-      {type === 'number' && (
-        <InputNumber
-          decimalSeparator={','}
-          inputMode="decimal"
-          pattern={'[0-9].*'}
-          placeholder={placeholder}
-          readOnly={readonly}
-          value={form?.values[field?.name!]}
-          onChange={handleNumberChange}
-        />
-      )}
+      }
     </InputWrapper>
   );
 };
