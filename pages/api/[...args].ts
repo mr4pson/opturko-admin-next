@@ -7,8 +7,8 @@ export const config = {
 };
 
 const proxy = createProxyMiddleware({
-  // target: 'http://localhost:3100',
-  target: 'http://194.58.96.45:3100',
+  target: 'http://localhost:3100',
+  // target: 'http://194.58.96.45:3100',
 
   pathRewrite: {
     '^/api/': '/', // remove base path

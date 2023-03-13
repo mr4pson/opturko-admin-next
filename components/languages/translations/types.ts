@@ -14,6 +14,11 @@ enum ManageTranslationFormItemName {
   Men = 'men',
   Children = 'children',
   Categories = 'categories',
+  NoProducts = 'noProducts',
+  InvalidEmail = 'invalidEmail',
+  InvalidPassword = 'invalidPassword',
+  ServerError = 'serverError',
+  ContactAdministrator = 'contactAdministrator',
 }
 
 export { ManageTranslationFormItemName };

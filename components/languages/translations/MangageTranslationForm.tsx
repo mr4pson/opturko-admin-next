@@ -154,6 +154,36 @@ const ManageLanguageForm = ({
                   component={Input}
                   fullSize={true}
                 />
+                <FormItem
+                  title="Текст 'В разделе нет продуктов'"
+                  name={`${language.code}_${ManageTranslationFormItemName.NoProducts}`}
+                  component={Input}
+                  fullSize={true}
+                />
+                <FormItem
+                  title="Текст 'неправильный email'"
+                  name={`${language.code}_${ManageTranslationFormItemName.InvalidEmail}`}
+                  component={Input}
+                  fullSize={true}
+                />
+                <FormItem
+                  title="Текст 'невереый пароль'"
+                  name={`${language.code}_${ManageTranslationFormItemName.InvalidPassword}`}
+                  component={Input}
+                  fullSize={true}
+                />
+                <FormItem
+                  title="Текст 'ошибка сервера'"
+                  name={`${language.code}_${ManageTranslationFormItemName.ServerError}`}
+                  component={Input}
+                  fullSize={true}
+                />
+                <FormItem
+                  title="Текст 'свяжитесь с администратором'"
+                  name={`${language.code}_${ManageTranslationFormItemName.ContactAdministrator}`}
+                  component={Input}
+                  fullSize={true}
+                />
               </div>
             ))}
             <Button htmlType={'submit'} loading={isSaveLoading}>
