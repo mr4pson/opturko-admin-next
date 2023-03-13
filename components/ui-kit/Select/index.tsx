@@ -1,7 +1,8 @@
 import { FieldInputProps, FieldMetaProps, FormikProps } from 'formik';
-import { Dispatch, useEffect, useState } from 'react';
+import { Dispatch, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import ChevronDownSVG from '../../../assets/svg/chevron-down.svg';
+import { useOnClickOutside } from '../../../common/hooks';
 import { TFormFieldProps } from '../../../common/types';
 import useConnectForm from '../useConnectForm';
 import { handleDropdownExpand } from './helpers';
@@ -40,8 +41,15 @@ const Select: React.FC<Props & TFormFieldProps> = ({
   const [selected, setSelected] = useState<SelectItem | undefined>(
     selectedItem,
   );
+  const wrapperRef = useRef<HTMLDivElement | null>(null);
+  const dropdownItemsRef = useRef<HTMLDivElement | null>(null);
+
+  const handleDropdownClose = () => {
+    setExpanded(false);
+  };
 
   useConnectForm(selected?.value, form, field, hasSchema, onChange);
+  useOnClickOutside(wrapperRef, handleDropdownClose, dropdownItemsRef);
 
   useEffect(() => {
     setSelected(selectedItem);
@@ -59,7 +67,7 @@ const Select: React.FC<Props & TFormFieldProps> = ({
     };
 
   return (
-    <SelectBody>
+    <SelectBody ref={wrapperRef}>
       <SelectHeader
         style={style}
         onClick={handleDropdownExpand(setExpanded)}
@@ -73,7 +81,7 @@ const Select: React.FC<Props & TFormFieldProps> = ({
           <ChevronDownSVG />
         </ChevronWrapper>
       </SelectHeader>
-      <SelectDropdown expanded={expanded} style={style}>
+      <SelectDropdown ref={dropdownItemsRef} expanded={expanded} style={style}>
         {items?.map((item, index) => (
           <SelectDropdownItem
             key={`drop-down-${index}`}
@@ -144,11 +152,12 @@ const SelectDropdown = styled.div<{ expanded: boolean }>`
   background: #edf2fb;
   border-top: 1px solid #4a5d7e;
   border-radius: 0 0 12px 12px;
+  max-height: 300px;
+  overflow: auto;
 `;
 
 const SelectDropdownItem = styled.div<{ isSelected: boolean }>`
   padding: 5px 6px;
-  height: 30px;
   display: flex;
   align-items: center;
   gap: 10px;

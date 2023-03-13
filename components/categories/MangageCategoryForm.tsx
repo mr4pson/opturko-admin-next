@@ -41,11 +41,15 @@ const ManageCategoryForm = ({
       accum: { [key: string]: { [key: string]: string } },
       [key, translation],
     ) => {
-      Object.entries(JSON.parse(translation.toString())).forEach(
-        ([lang, value]: any) => {
-          accum[`${lang}_${key}`] = value;
-        },
-      );
+      try {
+        Object.entries(JSON.parse(translation.toString())).forEach(
+          ([lang, value]: any) => {
+            accum[`${lang}_${key}`] = value;
+          },
+        );
+      } catch (error) {
+        console.log(error);
+      }
 
       return accum;
     },
