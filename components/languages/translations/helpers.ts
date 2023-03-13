@@ -52,7 +52,6 @@ const onSubmit =
         };
       }, {});
 
-    console.log(payload);
     const result = (await dispatch(
       updateTranslation(payload as unknown as Translation),
     )) as any;
@@ -88,7 +87,17 @@ const getTranslationFormSchema = (languages: Language[]) => {
         Yup.string().required('Поле обязательно'),
       [`[${language.code}]${ManageTranslationFormItemName.InPackage}`]:
         Yup.string().required('Поле обязательно'),
-      [`[${language.code}]${ManageTranslationFormItemName.AddToCart}`]:
+      [`[${language.code}]${ManageTranslationFormItemName.Categories}`]:
+        Yup.string().required('Поле обязательно'),
+      [`[${language.code}]${ManageTranslationFormItemName.NoProducts}`]:
+        Yup.string().required('Поле обязательно'),
+      [`[${language.code}]${ManageTranslationFormItemName.InvalidEmail}`]:
+        Yup.string().required('Поле обязательно'),
+      [`[${language.code}]${ManageTranslationFormItemName.InvalidPassword}`]:
+        Yup.string().required('Поле обязательно'),
+      [`[${language.code}]${ManageTranslationFormItemName.ServerError}`]:
+        Yup.string().required('Поле обязательно'),
+      [`[${language.code}]${ManageTranslationFormItemName.ContactAdministrator}`]:
         Yup.string().required('Поле обязательно'),
     };
 
