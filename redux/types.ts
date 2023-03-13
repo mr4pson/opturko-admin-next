@@ -1,5 +1,11 @@
 import { IUser } from '../common/interfaces/user.interface';
-import { Category, Product, User } from '../swagger/autogen';
+import {
+  Category,
+  Language,
+  Product,
+  Translation,
+  User,
+} from '../swagger/autogen';
 
 type TAuthState = {
   user: IUser | null;
@@ -9,6 +15,19 @@ type TAuthState = {
 type TCategoriesState = {
   categories: Category[];
   category: Category | null;
+  loading: boolean;
+  saveLoading: boolean;
+};
+
+type TLanguageState = {
+  languages: Language[];
+  language: Language | null;
+  loading: boolean;
+  saveLoading: boolean;
+};
+
+type TTranslationState = {
+  translation: Translation | null;
   loading: boolean;
   saveLoading: boolean;
 };
@@ -27,4 +46,11 @@ type TUsersState = {
   saveLoading: boolean;
 };
 
-export type { TAuthState, TCategoriesState, TProductsState, TUsersState };
+export type {
+  TAuthState,
+  TCategoriesState,
+  TProductsState,
+  TUsersState,
+  TLanguageState,
+  TTranslationState,
+};

@@ -3,6 +3,7 @@ const ROUTES_MAP = {
   '[id]': 'Редактирование',
   categories: 'Категории',
   products: 'Товары',
+  languages: 'Локализации',
   users: 'Пользователи',
 } as any;
 

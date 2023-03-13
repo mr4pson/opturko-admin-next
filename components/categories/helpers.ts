@@ -30,17 +30,67 @@ const handleDeleteClick =
 
 const onSubmit =
   (id: number, editMode: boolean, router: NextRouter, dispatch: AppDispatch) =>
-  async (values: any) => {
+  async (rawFormValue: any) => {
+    console.log(rawFormValue);
+    const formValue = Object.entries(rawFormValue)
+      .filter(([key]) => key.includes('_'))
+      .reduce((accum: any, [key, value]) => {
+        const [lang, translationKey] = key.split('_') as [string, string];
+
+        if (!accum[lang]) {
+          accum[lang] = {};
+        }
+
+        accum[lang][translationKey] = value;
+
+        return accum;
+      }, {}) as { [key: string]: { [key: string]: string } };
+
+    const translations = Object.entries(formValue).reduce(
+      (
+        accum: { [key: string]: { [key: string]: string } },
+        [lang, translation],
+      ) => {
+        Object.entries(translation).forEach(([key, value]) => {
+          if (!accum[key]) {
+            accum[key] = {};
+          }
+
+          accum[key][lang] = value;
+        });
+
+        return accum;
+      },
+      {},
+    );
+    const payload = Object.entries(translations)
+      .map(([key, value]) => ({
+        [key]: JSON.stringify(value),
+      }))
+      .reduce((accum, translation) => {
+        return {
+          ...accum,
+          ...translation,
+        };
+      }, {}) as any;
+
+    console.log(payload);
+
     if (editMode) {
       const result = (await dispatch(
-        editCategory({ id, category: values }),
+        editCategory({
+          id,
+          category: { ...payload, section: rawFormValue.section },
+        }),
       )) as any;
 
       if (result.error?.message === 'Unauthorized.') {
         handleSignout(dispatch, router);
       }
     } else {
-      const result = (await dispatch(createCategory(values))) as any;
+      const result = (await dispatch(
+        createCategory({ ...payload, section: rawFormValue.section }),
+      )) as any;
 
       if (result.error?.message === 'Unauthorized.') {
         handleSignout(dispatch, router);

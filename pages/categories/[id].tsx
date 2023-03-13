@@ -7,7 +7,8 @@ import {
   clearCategory,
   fetchCategory,
 } from '../../redux/slicers/categorySlicer';
-import { TCategoriesState } from '../../redux/types';
+import { fetchLanguages } from '../../redux/slicers/languageSlicer';
+import { TCategoriesState, TLanguageState } from '../../redux/types';
 
 const EditCategory = () => {
   const title = 'Редактирование категории';
@@ -15,12 +16,16 @@ const EditCategory = () => {
   const { category, loading, saveLoading } = useAppSelector<TCategoriesState>(
     (state) => state.categories,
   );
+  const { languages } = useAppSelector<TLanguageState>(
+    (state) => state.languages,
+  );
 
   const dispatch = useAppDispatch();
 
   useEffect(() => {
     (async () => {
       if (router.query.id) {
+        await dispatch(fetchLanguages());
         await dispatch(fetchCategory(router.query.id as any));
       }
     })();
@@ -35,6 +40,7 @@ const EditCategory = () => {
       title={title}
       editMode={true}
       category={category}
+      languages={languages}
       isLoading={loading}
       isSaveLoading={saveLoading}
     />

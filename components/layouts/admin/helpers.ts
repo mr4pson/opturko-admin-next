@@ -11,6 +11,10 @@ export const handleSignout = (dispatch: AppDispatch, router: NextRouter) => {
 const getNavItems = (dispatch: AppDispatch, router: NextRouter): TNavItem[] => {
   return [
     {
+      title: 'Локализации',
+      link: '/languages',
+    },
+    {
       title: 'Категории',
       link: '/categories',
     },

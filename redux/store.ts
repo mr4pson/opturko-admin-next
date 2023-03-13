@@ -9,13 +9,17 @@ import { createWrapper, HYDRATE } from 'next-redux-wrapper';
 import authReducer from './slicers/authSlicer';
 import categoryReducer from './slicers/categorySlicer';
 import productReducer from './slicers/productSlicer';
+import languageReducer from './slicers/languageSlicer';
 import userReducer from './slicers/userSlicer';
+import translationReducer from './slicers/translationSlicer';
 
 const combinedReducer = combineReducers({
   auth: authReducer,
   categories: categoryReducer,
   products: productReducer,
+  languages: languageReducer,
   users: userReducer,
+  translations: translationReducer,
 });
 
 const reducer = (
