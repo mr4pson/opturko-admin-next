@@ -21,6 +21,22 @@ const COLUMNS: TDataGridCol<Category>[] = [
   {
     field: 'title',
     title: 'Название',
+    render: (item) => {
+      let title = {} as { [key: string]: string };
+      let lang = 'ru';
+
+      try {
+        title = JSON.parse(item.title);
+
+        if (Object.keys(title).length && !title.ru) {
+          lang = Object.keys(title)[0];
+        }
+      } catch (error) {
+        console.log(error);
+      }
+
+      return <div>{title[lang]}</div>;
+    },
   },
   {
     field: 'createdAt',

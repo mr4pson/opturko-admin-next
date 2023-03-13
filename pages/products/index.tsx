@@ -22,7 +22,10 @@ import Modal from '../../components/ui-kit/Modal';
 import Select from '../../components/ui-kit/Select';
 import { SelectItem } from '../../components/ui-kit/Select/types';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { fetchCategoriesBySection } from '../../redux/slicers/categorySlicer';
+import {
+  fetchCategories,
+  fetchCategoriesBySection,
+} from '../../redux/slicers/categorySlicer';
 import {
   clearProducts,
   fetchProducts,
@@ -45,17 +48,43 @@ const ProductsPage = (): JSX.Element => {
   const { categories } = useAppSelector<TCategoriesState>(
     (state) => state.categories,
   );
-  const categoryItems = categories.map((category) => ({
-    label: category.title,
-    value: category.id,
-  }));
+
+  const categoryItems = categories.map((category) => {
+    let title = {} as { [key: string]: string };
+    let lang = 'ru';
+
+    try {
+      title = JSON.parse(category.title);
+
+      if (Object.keys(title).length && !title.ru) {
+        lang = Object.keys(title)[0];
+      }
+    } catch (error) {
+      console.log(error);
+    }
+
+    const curSection = SECTIONS.find(
+      (sectionItem) => sectionItem.value === category.section,
+    );
+
+    return {
+      label: `${curSection?.label} -> ${title[lang]}`,
+      value: category.id,
+    };
+  });
 
   useEffect(() => {
     setTimeout(() => {
       (async () => {
-        const result = (await dispatch(fetchProducts())) as any;
+        const caregoriesResult = (await dispatch(fetchCategories())) as any;
 
-        if (result.error?.message === 'Unauthorized.') {
+        if (caregoriesResult.error?.message === 'Unauthorized.') {
+          handleSignout(dispatch, router);
+        }
+
+        const productsResult = (await dispatch(fetchProducts())) as any;
+
+        if (productsResult.error?.message === 'Unauthorized.') {
           handleSignout(dispatch, router);
         }
       })();

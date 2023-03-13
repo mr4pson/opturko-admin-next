@@ -49,10 +49,25 @@ const ManageProductForm = ({
   const [curSection, setCurSection] = useState<string>(
     product?.category.section,
   );
-  const categoryItems = categories.map((category) => ({
-    label: category.title,
-    value: category.id,
-  }));
+
+  const categoryItems = categories.map((category) => {
+    let title = {} as { [key: string]: string };
+    let lang = 'ru';
+
+    try {
+      title = JSON.parse(category.title);
+
+      if (Object.keys(title).length && !title.ru) {
+        lang = Object.keys(title)[0];
+      }
+    } catch (error) {
+      console.log(error);
+    }
+    return {
+      label: `${title[lang]}`,
+      value: category.id,
+    };
+  });
 
   const handleSectionChange = () => (section: string) => {
     setCurSection(section);
