@@ -167,7 +167,7 @@ const ManageLanguageForm = ({
                   fullSize={true}
                 />
                 <FormItem
-                  title="Текст 'невереый пароль'"
+                  title="Текст 'неверный пароль'"
                   name={`${language.code}_${ManageTranslationFormItemName.InvalidPassword}`}
                   component={Input}
                   fullSize={true}
