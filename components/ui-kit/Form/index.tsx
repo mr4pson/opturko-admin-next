@@ -20,6 +20,7 @@ const Form: React.FC<Props> = ({
   return (
     <Formik
       innerRef={innerRef}
+      enableReinitialize={true}
       validationSchema={formSchema}
       initialValues={initialValues}
       onSubmit={(a, b) => {

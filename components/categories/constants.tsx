@@ -8,7 +8,7 @@ import { Section } from '../../common/enums';
 import { formatSectionName } from './helpers';
 
 const FORM_SCHEMA = Yup.object().shape({
-  [ManageCategoryFormItemName.Title]: Yup.string().required('Поле обязательно'),
+  // [ManageCategoryFormItemName.Title]: Yup.string().required('Поле обязательно'),
   [ManageCategoryFormItemName.Section]:
     Yup.string().required('Поле обязательно'),
 });
