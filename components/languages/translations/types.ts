@@ -19,6 +19,8 @@ enum ManageTranslationFormItemName {
   InvalidPassword = 'invalidPassword',
   ServerError = 'serverError',
   ContactAdministrator = 'contactAdministrator',
+  CheapFirst = 'cheapFirst',
+  ExpensiveFirst = 'expensiveFirst',
 }
 
 export { ManageTranslationFormItemName };

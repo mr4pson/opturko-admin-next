@@ -184,6 +184,18 @@ const ManageLanguageForm = ({
                   component={Input}
                   fullSize={true}
                 />
+                <FormItem
+                  title="Элемент сортировки по цене 'Сначала дешевые'"
+                  name={`${language.code}_${ManageTranslationFormItemName.CheapFirst}`}
+                  component={Input}
+                  fullSize={true}
+                />
+                <FormItem
+                  title="Элемент сортировки по цене 'Сначала дорогие'"
+                  name={`${language.code}_${ManageTranslationFormItemName.ExpensiveFirst}`}
+                  component={Input}
+                  fullSize={true}
+                />
               </div>
             ))}
             <Button htmlType={'submit'} loading={isSaveLoading}>
