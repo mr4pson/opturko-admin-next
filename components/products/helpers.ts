@@ -19,31 +19,36 @@ const handleCreateClick = (router: NextRouter) => () => {
 
 const handleDeleteClick =
   (product: Product, setCurProduct: Dispatch<SetStateAction<Product | null>>) =>
-  () => {
-    setCurProduct(product);
-  };
+    () => {
+      setCurProduct(product);
+    };
 
 const onSubmit =
   (id: number, editMode: boolean, router: NextRouter, dispatch: AppDispatch) =>
-  async (values: any) => {
-    if (editMode) {
-      const result = (await dispatch(
-        editProduct({ id, product: values }),
-      )) as any;
+    async (values: any) => {
+      if (editMode) {
+        const result = (await dispatch(
+          editProduct({
+            id, product: {
+              ...values,
+              price: Number(values.price)
+            }
+          }),
+        )) as any;
 
-      if (result.error?.message === 'Unauthorized.') {
-        handleSignout(dispatch, router);
+        if (result.error?.message === 'Unauthorized.') {
+          handleSignout(dispatch, router);
+        }
+      } else {
+        const result = (await dispatch(createProduct(values))) as any;
+
+        if (result.error?.message === 'Unauthorized.') {
+          handleSignout(dispatch, router);
+        }
       }
-    } else {
-      const result = (await dispatch(createProduct(values))) as any;
 
-      if (result.error?.message === 'Unauthorized.') {
-        handleSignout(dispatch, router);
-      }
-    }
-
-    router.push('/products');
-  };
+      router.push('/products');
+    };
 
 const handleConfirm =
   (
@@ -52,15 +57,15 @@ const handleConfirm =
     dispatch: AppDispatch,
     setCurProduct: Dispatch<SetStateAction<Product | null>>,
   ) =>
-  async () => {
-    const deleteRes = (await dispatch(deleteProduct(curProduct!.id))) as any;
+    async () => {
+      const deleteRes = (await dispatch(deleteProduct(curProduct!.id))) as any;
 
-    if (deleteRes.error?.message === 'Unauthorized.') {
-      handleSignout(dispatch, router);
-    }
+      if (deleteRes.error?.message === 'Unauthorized.') {
+        handleSignout(dispatch, router);
+      }
 
-    setCurProduct(null);
-  };
+      setCurProduct(null);
+    };
 
 const handleClose =
   (setCurProduct: Dispatch<SetStateAction<Product | null>>) => () => {
