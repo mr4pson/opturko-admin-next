@@ -33,6 +33,7 @@ import {
 } from '../../redux/slicers/productSlicer';
 import { TCategoriesState, TProductsState } from '../../redux/types';
 import { Product } from '../../swagger/autogen';
+import Pagination from '../../components/common/Pagination';
 
 const ProductsPage = (): JSX.Element => {
   const dispatch = useAppDispatch();
@@ -42,12 +43,18 @@ const ProductsPage = (): JSX.Element => {
   const [category, setCategory] = useState<SelectItem>();
   const [priceFrom, setPriceFrom] = useState<number>();
   const [priceTo, setPriceTo] = useState<number>();
-  const { products, loading } = useAppSelector<TProductsState>(
+  const { products, totalLength, loading } = useAppSelector<TProductsState>(
     (state) => state.products,
   );
   const { categories } = useAppSelector<TCategoriesState>(
     (state) => state.categories,
   );
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const PAGE_ITEMS_LIMIT = 2;
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
 
   const categoryItems = categories.map((category) => {
     let title = {} as { [key: string]: string };
@@ -81,12 +88,6 @@ const ProductsPage = (): JSX.Element => {
         if (caregoriesResult.error?.message === 'Unauthorized.') {
           handleSignout(dispatch, router);
         }
-
-        const productsResult = (await dispatch(fetchProducts())) as any;
-
-        if (productsResult.error?.message === 'Unauthorized.') {
-          handleSignout(dispatch, router);
-        }
       })();
 
       return () => {
@@ -96,22 +97,44 @@ const ProductsPage = (): JSX.Element => {
   }, [dispatch]);
 
   useEffect(() => {
+    setTimeout(() => {
+      (async () => {
+        const skip = (currentPage - 1) * PAGE_ITEMS_LIMIT;
+
+        if (category) {
+          const productsResult = (await dispatch(
+            fetchProductsByCategory({
+              id: category.value as number,
+              priceFrom,
+              priceTo,
+              skip,
+              limit: PAGE_ITEMS_LIMIT,
+            }),
+          )) as any;
+
+          if (productsResult.error?.message === 'Unauthorized.') {
+            handleSignout(dispatch, router);
+          }
+
+          return;
+        }
+
+        const productsResult = (await dispatch(
+          fetchProducts({ skip, limit: PAGE_ITEMS_LIMIT }),
+        )) as any;
+
+        if (productsResult.error?.message === 'Unauthorized.') {
+          handleSignout(dispatch, router);
+        }
+      })();
+    });
+  }, [currentPage, category, priceFrom, priceTo]);
+
+  useEffect(() => {
     if (section) {
       dispatch(fetchCategoriesBySection(section));
     }
   }, [section]);
-
-  useEffect(() => {
-    if (category) {
-      dispatch(
-        fetchProductsByCategory({
-          id: category.value as number,
-          priceFrom,
-          priceTo,
-        }),
-      );
-    }
-  }, [category, priceFrom, priceTo]);
 
   const handleSectionChange = () => (value: string) => {
     setSection(value);
@@ -186,6 +209,12 @@ const ProductsPage = (): JSX.Element => {
             </LinkItem>
           </>
         )}
+      />
+      <Pagination
+        currentPage={Number(currentPage) ?? 1}
+        totalCount={totalLength}
+        pageSize={PAGE_ITEMS_LIMIT}
+        onPageChange={handlePageChange}
       />
       <Modal
         title="Удаление товара"
