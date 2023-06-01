@@ -43,6 +43,7 @@ const ProductsPage = (): JSX.Element => {
   const [category, setCategory] = useState<SelectItem>();
   const [priceFrom, setPriceFrom] = useState<number>();
   const [priceTo, setPriceTo] = useState<number>();
+  const [code, setCode] = useState<number>();
   const { products, totalLength, loading } = useAppSelector<TProductsState>(
     (state) => state.products,
   );
@@ -105,6 +106,7 @@ const ProductsPage = (): JSX.Element => {
           const productsResult = (await dispatch(
             fetchProductsByCategory({
               id: category.value as number,
+              code,
               priceFrom,
               priceTo,
               skip,
@@ -120,7 +122,11 @@ const ProductsPage = (): JSX.Element => {
         }
 
         const productsResult = (await dispatch(
-          fetchProducts({ skip, limit: PAGE_ITEMS_LIMIT }),
+          fetchProducts({
+            code,
+            skip,
+            limit: PAGE_ITEMS_LIMIT,
+          }),
         )) as any;
 
         if (productsResult.error?.message === 'Unauthorized.') {
@@ -128,7 +134,7 @@ const ProductsPage = (): JSX.Element => {
         }
       })();
     });
-  }, [currentPage, category, priceFrom, priceTo]);
+  }, [currentPage, category, priceFrom, priceTo, code]);
 
   useEffect(() => {
     if (section) {
@@ -153,6 +159,10 @@ const ProductsPage = (): JSX.Element => {
 
   const handlePriceToChange = () => (value: number | string) => {
     setPriceTo(+value);
+  };
+
+  const handleCodeChange = () => (value: number | string) => {
+    setCode(value ? +value : undefined);
   };
 
   return (
@@ -182,6 +192,12 @@ const ProductsPage = (): JSX.Element => {
           style={{ width: '250px' }}
           onChange={handleCategoryChange()}
         ></Select>
+        <Input
+          width={200}
+          value={code ?? 0}
+          placeholder={'Артикул'}
+          onChange={handleCodeChange()}
+        />
         <Input
           width={200}
           value={priceFrom ?? 0}
