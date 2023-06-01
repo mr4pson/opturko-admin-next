@@ -5,27 +5,30 @@ import { TProductsState } from '../types';
 import { toast } from 'react-toastify';
 import {
   CreateProductDto,
+  IPaginationResponse,
   Product,
   ProductsService,
 } from '../../swagger/autogen';
 
 export const fetchProducts = createAsyncThunk<
-  Product[],
-  undefined,
+  IPaginationResponse,
+  { skip: number; limit: number },
   { rejectValue: string }
->('products/fetchProducts', async function () {
-  return await ProductsService.getProducts();
+>('products/fetchProducts', async function ({ skip, limit }) {
+  return await ProductsService.getProducts(skip, limit);
 });
 
 export const fetchProductsByCategory = createAsyncThunk<
-  Product[],
-  { id: number; priceFrom: number | undefined; priceTo: number | undefined },
+  IPaginationResponse,
+  { id: number; priceFrom: number | undefined; priceTo: number | undefined, skip: number; limit: number },
   { rejectValue: string }
->('products/fetchProductsByCategory', async function (payload) {
+>('products/fetchProductsByCategory', async function ({ id, priceFrom, priceTo, skip, limit }) {
   return await ProductsService.getProductsByCategory(
-    payload.id,
-    payload.priceFrom,
-    payload.priceTo,
+    id,
+    skip,
+    limit,
+    priceFrom,
+    priceTo,
   );
 });
 
@@ -69,6 +72,7 @@ export const deleteProduct = createAsyncThunk<
 
 const initialState: TProductsState = {
   products: [],
+  totalLength: 0,
   product: null,
   loading: false,
   saveLoading: false,
@@ -80,6 +84,7 @@ const productSlicer = createSlice({
   reducers: {
     clearProducts(state) {
       state.products = initialState.products;
+      state.totalLength = initialState.totalLength;
     },
     clearProduct(state) {
       state.product = initialState.product;
@@ -90,7 +95,8 @@ const productSlicer = createSlice({
       //fetchProducts
       .addCase(fetchProducts.pending, handlePending)
       .addCase(fetchProducts.fulfilled, (state, action) => {
-        state.products = action.payload;
+        state.products = action.payload.data as unknown as Product[];
+        state.totalLength = action.payload.totalLength;
         state.loading = false;
         console.log('fulfilled');
       })
@@ -110,7 +116,8 @@ const productSlicer = createSlice({
       //fetchProducts
       .addCase(fetchProductsByCategory.pending, handlePending)
       .addCase(fetchProductsByCategory.fulfilled, (state, action) => {
-        state.products = action.payload;
+        state.products = action.payload.data as unknown as Product[];
+        state.totalLength = action.payload.totalLength;
         state.loading = false;
         console.log('fulfilled');
       })

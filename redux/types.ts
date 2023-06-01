@@ -34,6 +34,7 @@ type TTranslationState = {
 
 type TProductsState = {
   products: Product[];
+  totalLength: number;
   product: Product | null;
   loading: boolean;
   saveLoading: boolean;
