@@ -50,7 +50,7 @@ const ProductsPage = (): JSX.Element => {
     (state) => state.categories,
   );
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const PAGE_ITEMS_LIMIT = 2;
+  const PAGE_ITEMS_LIMIT = 12;
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
