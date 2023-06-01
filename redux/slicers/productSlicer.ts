@@ -12,23 +12,24 @@ import {
 
 export const fetchProducts = createAsyncThunk<
   IPaginationResponse,
-  { skip: number; limit: number },
+  { code?: number; skip: number; limit: number },
   { rejectValue: string }
->('products/fetchProducts', async function ({ skip, limit }) {
-  return await ProductsService.getProducts(skip, limit);
+>('products/fetchProducts', async function ({ code, skip, limit }) {
+  return await ProductsService.getProducts(skip, limit, undefined, undefined, code);
 });
 
 export const fetchProductsByCategory = createAsyncThunk<
   IPaginationResponse,
-  { id: number; priceFrom: number | undefined; priceTo: number | undefined, skip: number; limit: number },
+  { id: number; code?: number; priceFrom: number | undefined; priceTo: number | undefined, skip: number; limit: number },
   { rejectValue: string }
->('products/fetchProductsByCategory', async function ({ id, priceFrom, priceTo, skip, limit }) {
+>('products/fetchProductsByCategory', async function ({ id, code, priceFrom, priceTo, skip, limit }) {
   return await ProductsService.getProductsByCategory(
     id,
     skip,
     limit,
     priceFrom,
     priceTo,
+    code,
   );
 });
 
