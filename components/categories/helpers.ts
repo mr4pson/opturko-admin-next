@@ -5,6 +5,7 @@ import {
   createCategory,
   deleteCategory,
   editCategory,
+  purgeCategory,
 } from '../../redux/slicers/categorySlicer';
 import { AppDispatch } from '../../redux/store';
 import { Category } from '../../swagger/autogen';
@@ -19,19 +20,31 @@ const handleCreateClick = (router: NextRouter) => () => {
   router.push(`/categories/create`);
 };
 
-const handleDeleteClick =
+const handleDeleteCategoryClick =
   (
     category: Category,
+    setIsDeleteCategoryOpen: Dispatch<Boolean>,
     setCurCategory: Dispatch<SetStateAction<Category | null>>,
   ) =>
   () => {
     setCurCategory(category);
+    setIsDeleteCategoryOpen(true);
+  };
+
+const handlePurgeCategoryClick =
+  (
+    category: Category,
+    setIsPurgeCategoryOpen: Dispatch<Boolean>,
+    setCurCategory: Dispatch<SetStateAction<Category | null>>,
+  ) =>
+  () => {
+    setCurCategory(category);
+    setIsPurgeCategoryOpen(true);
   };
 
 const onSubmit =
   (id: number, editMode: boolean, router: NextRouter, dispatch: AppDispatch) =>
   async (rawFormValue: any) => {
-    console.log(rawFormValue);
     const formValue = Object.entries(rawFormValue)
       .filter(([key]) => key.includes('_'))
       .reduce((accum: any, [key, value]) => {
@@ -100,12 +113,13 @@ const onSubmit =
     router.push('/categories');
   };
 
-const handleConfirm =
+const handleDeleteCategoryConfirm =
   (
     curCategory: Category | null,
     router: NextRouter,
     dispatch: AppDispatch,
     setCurCategory: Dispatch<SetStateAction<Category | null>>,
+    setIsDeleteCategoryOpen: Dispatch<Boolean>,
   ) =>
   async () => {
     const deleteRes = (await dispatch(deleteCategory(curCategory!.id))) as any;
@@ -115,11 +129,38 @@ const handleConfirm =
     }
 
     setCurCategory(null);
+    setIsDeleteCategoryOpen(false);
   };
 
-const handleClose =
-  (setCurCategory: Dispatch<SetStateAction<Category | null>>) => () => {
+const handlePurgeCategoryConfirm =
+  (
+    curCategory: Category | null,
+    router: NextRouter,
+    dispatch: AppDispatch,
+    setCurCategory: Dispatch<SetStateAction<Category | null>>,
+    setIsDeleteCategoryOpen: Dispatch<Boolean>,
+  ) =>
+  async () => {
+    const deleteRes = (await dispatch(purgeCategory(curCategory!.id))) as any;
+
+    if (deleteRes.error?.message === 'Unauthorized.') {
+      handleSignout(dispatch, router);
+    }
+
     setCurCategory(null);
+    setIsDeleteCategoryOpen(false);
+  };
+
+const handleDeleteCategoryClose =
+  (setCurCategory: Dispatch<SetStateAction<Category | null>>, setIsDeleteCategoryOpen: Dispatch<Boolean>) => () => {
+    setCurCategory(null);
+    setIsDeleteCategoryOpen(false);
+  };
+
+const handlePurgeCategoryClose =
+  (setCurCategory: Dispatch<SetStateAction<Category | null>>, setIsPurgeCategoryOpen: Dispatch<Boolean>) => () => {
+    setCurCategory(null);
+    setIsPurgeCategoryOpen(false);
   };
 
 const formatSectionName = (section: Section) => {
@@ -133,9 +174,12 @@ const formatSectionName = (section: Section) => {
 export {
   handleChangeClick,
   handleCreateClick,
-  handleDeleteClick,
-  handleConfirm,
-  handleClose,
+  handleDeleteCategoryClick,
+  handlePurgeCategoryClick,
+  handleDeleteCategoryConfirm,
+  handlePurgeCategoryConfirm,
+  handleDeleteCategoryClose,
+  handlePurgeCategoryClose,
   onSubmit,
   formatSectionName,
 };

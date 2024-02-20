@@ -41,6 +41,7 @@ const ManageProductForm = ({
     price: product?.price,
     // number: product?.number,
     code: product?.code,
+    brand: product?.brand,
     numberInPack: product?.numberInPack,
     sizes: product?.sizes,
     image: product?.image,
@@ -114,6 +115,12 @@ const ManageProductForm = ({
               name={ManageProductFormItemName.Code}
               component={Input}
               type={'number'}
+              fullSize={true}
+            />
+            <FormItem
+              title="Бренд"
+              name={ManageProductFormItemName.Brand}
+              component={Input}
               fullSize={true}
             />
             <FormItem

@@ -1,5 +1,6 @@
 const ROUTES_MAP = {
   create: 'Создание',
+  upload: 'Загрузка',
   '[id]': 'Редактирование',
   categories: 'Категории',
   products: 'Товары',

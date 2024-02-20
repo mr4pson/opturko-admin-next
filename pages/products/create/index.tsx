@@ -3,7 +3,7 @@ import ManageProductForm from '../../../components/products/ManageProductForm';
 import { useAppSelector } from '../../../redux/hooks';
 import { TCategoriesState, TProductsState } from '../../../redux/types';
 
-const CreateCategory = () => {
+const CreateProdcut = () => {
   const title = 'Создание товара';
   const { saveLoading } = useAppSelector<TProductsState>(
     (state) => state.products,
@@ -24,6 +24,6 @@ const CreateCategory = () => {
   );
 };
 
-CreateCategory.PageLayout = AdminLayout;
+CreateProdcut.PageLayout = AdminLayout;
 
-export default CreateCategory;
+export default CreateProdcut;
