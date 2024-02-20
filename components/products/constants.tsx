@@ -37,6 +37,10 @@ const COLUMNS: TDataGridCol<Product>[] = [
     ),
   },
   {
+    field: 'brand',
+    title: 'Бренд',
+  },
+  {
     field: 'price',
     title: 'Цена',
   },

@@ -13,6 +13,7 @@ import {
   handleConfirm,
   handleCreateClick,
   handleDeleteClick,
+  handleUploadClick,
 } from '../../components/products/helpers';
 import BreadCrumbs from '../../components/ui-kit/Breadcrumbs';
 import Button from '../../components/ui-kit/Button';
@@ -44,6 +45,7 @@ const ProductsPage = (): JSX.Element => {
   const [priceFrom, setPriceFrom] = useState<number>();
   const [priceTo, setPriceTo] = useState<number>();
   const [code, setCode] = useState<number>();
+  const [brand, setBrand] = useState<string>();
   const { products, totalLength, loading } = useAppSelector<TProductsState>(
     (state) => state.products,
   );
@@ -107,6 +109,7 @@ const ProductsPage = (): JSX.Element => {
             fetchProductsByCategory({
               id: category.value as number,
               code,
+              brand,
               priceFrom,
               priceTo,
               skip,
@@ -124,6 +127,9 @@ const ProductsPage = (): JSX.Element => {
         const productsResult = (await dispatch(
           fetchProducts({
             code,
+            brand,
+            priceFrom,
+            priceTo,
             skip,
             limit: PAGE_ITEMS_LIMIT,
           }),
@@ -134,7 +140,7 @@ const ProductsPage = (): JSX.Element => {
         }
       })();
     });
-  }, [currentPage, category, priceFrom, priceTo, code]);
+  }, [currentPage, category, priceFrom, priceTo, code, brand]);
 
   useEffect(() => {
     if (section) {
@@ -165,6 +171,10 @@ const ProductsPage = (): JSX.Element => {
     setCode(value ? +value : undefined);
   };
 
+  const handleBrandChange = () => (value: number | string) => {
+    setBrand(value ? value.toString() : undefined);
+  };
+
   return (
     <>
       <Head>
@@ -173,9 +183,14 @@ const ProductsPage = (): JSX.Element => {
       </Head>
       <PageTitle>
         Товары
-        <Button width={250} onClick={handleCreateClick(router)}>
-          Создать товар
-        </Button>
+        <ButtonsWrapper>
+          <Button width={250} onClick={handleCreateClick(router)}>
+            Создать товар
+          </Button>
+          <Button width={250} onClick={handleUploadClick(router)}>
+            Загрузить
+          </Button>
+        </ButtonsWrapper>
       </PageTitle>
       <BreadCrumbs />
       <FiltersWrapper>
@@ -192,6 +207,12 @@ const ProductsPage = (): JSX.Element => {
           style={{ width: '250px' }}
           onChange={handleCategoryChange()}
         ></Select>
+        <Input
+          width={200}
+          value={brand ?? 0}
+          placeholder={'Бренд'}
+          onChange={handleBrandChange()}
+        />
         <Input
           width={200}
           value={code ?? 0}
@@ -259,6 +280,11 @@ const FiltersWrapper = styled.div`
   align-items: center;
   gap: 10px;
   padding-bottom: 20px;
+`;
+
+const ButtonsWrapper = styled.div`
+  display: flex;
+  gap: 10px;
 `;
 
 ProductsPage.PageLayout = AdminLayout;

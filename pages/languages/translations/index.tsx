@@ -3,7 +3,7 @@ import MangageTranslationForm from '../../../components/languages/translations/M
 import AdminLayout from '../../../components/layouts/admin';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import { fetchLanguages } from '../../../redux/slicers/languageSlicer';
-import { fetchTranslation } from '../../../redux/slicers/translationSlicer';
+import { fetchTranslation, initTranslation } from '../../../redux/slicers/translationSlicer';
 import { TLanguageState, TTranslationState } from '../../../redux/types';
 
 const CreateLanguage = () => {
@@ -16,8 +16,15 @@ const CreateLanguage = () => {
   );
 
   useEffect(() => {
-    dispatch(fetchTranslation());
-    dispatch(fetchLanguages());
+    (async () => {
+      const response = await dispatch(fetchTranslation());
+
+      if ((response as any).error) {
+        await dispatch(initTranslation());
+      }
+
+      dispatch(fetchLanguages());
+    })()
   }, []);
 
   return (

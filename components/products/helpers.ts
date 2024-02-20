@@ -17,6 +17,10 @@ const handleCreateClick = (router: NextRouter) => () => {
   router.push(`/products/create`);
 };
 
+const handleUploadClick = (router: NextRouter) => () => {
+  router.push(`/products/upload`);
+};
+
 const handleDeleteClick =
   (product: Product, setCurProduct: Dispatch<SetStateAction<Product | null>>) =>
     () => {
@@ -75,6 +79,7 @@ const handleClose =
 export {
   handleChangeClick,
   handleCreateClick,
+  handleUploadClick,
   handleDeleteClick,
   handleConfirm,
   handleClose,

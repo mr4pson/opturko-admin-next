@@ -12,17 +12,17 @@ import {
 
 export const fetchProducts = createAsyncThunk<
   IPaginationResponse,
-  { code?: number; skip: number; limit: number },
+  { code?: number; brand?: string; priceFrom: number | undefined; priceTo: number | undefined; skip: number; limit: number },
   { rejectValue: string }
->('products/fetchProducts', async function ({ code, skip, limit }) {
-  return await ProductsService.getProducts(skip, limit, undefined, undefined, code);
+>('products/fetchProducts', async function ({ code, brand, priceFrom, priceTo, skip, limit }) {
+  return await ProductsService.getProducts(skip, limit, priceFrom, priceTo, code, brand);
 });
 
 export const fetchProductsByCategory = createAsyncThunk<
   IPaginationResponse,
-  { id: number; code?: number; priceFrom: number | undefined; priceTo: number | undefined, skip: number; limit: number },
+  { id: number; code?: number; brand?: string; priceFrom: number | undefined; priceTo: number | undefined; skip: number; limit: number },
   { rejectValue: string }
->('products/fetchProductsByCategory', async function ({ id, code, priceFrom, priceTo, skip, limit }) {
+>('products/fetchProductsByCategory', async function ({ id, code, brand, priceFrom, priceTo, skip, limit }) {
   return await ProductsService.getProductsByCategory(
     id,
     skip,
@@ -30,6 +30,7 @@ export const fetchProductsByCategory = createAsyncThunk<
     priceFrom,
     priceTo,
     code,
+    brand,
   );
 });
 
@@ -69,6 +70,14 @@ export const deleteProduct = createAsyncThunk<
   { rejectValue: string }
 >('products/deleteProduct', async function (id) {
   return await ProductsService.deleteProduct(id);
+});
+
+export const uploadProducts = createAsyncThunk<
+  any,
+  { csvFile: string, images: any[] },
+  { rejectValue: string }
+>('products/uploadProduct', async function (payload) {
+  return await ProductsService.uploadProducts(payload);
 });
 
 const initialState: TProductsState = {
@@ -214,6 +223,29 @@ const productSlicer = createSlice({
         console.log('fulfilled');
       })
       .addCase(deleteProduct.rejected, (state, action) => {
+        state.saveLoading = false;
+        console.log('rejected');
+
+        if (action.error.message === 'Unauthorized.') {
+          toast.error('Вы неавторизованы.', {
+            position: toast.POSITION.TOP_RIGHT,
+          });
+        } else {
+          toast.error('Ошибка на сервере. Обратитесь к администратору.', {
+            position: toast.POSITION.TOP_RIGHT,
+          });
+        }
+      })
+      //uploadProducts
+      .addCase(uploadProducts.pending, handleChangePending)
+      .addCase(uploadProducts.fulfilled, (state, action) => {
+        state.saveLoading = false;
+        toast.info('Товары успешно загружены.', {
+          position: toast.POSITION.TOP_RIGHT,
+        });
+        console.log('fulfilled');
+      })
+      .addCase(uploadProducts.rejected, (state, action) => {
         state.saveLoading = false;
         console.log('rejected');
 

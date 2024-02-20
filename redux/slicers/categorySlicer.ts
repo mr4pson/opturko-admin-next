@@ -60,6 +60,14 @@ export const deleteCategory = createAsyncThunk<
   return await CategoriesService.deleteCategory(id);
 });
 
+export const purgeCategory = createAsyncThunk<
+  number,
+  number,
+  { rejectValue: string }
+>('categories/purgeCategory', async function (id) {
+  return await CategoriesService.purgeCategory(id);
+});
+
 const initialState: TCategoriesState = {
   categories: [],
   category: null,
@@ -203,6 +211,27 @@ const categorySlicer = createSlice({
       })
       .addCase(deleteCategory.rejected, (state, action) => {
         state.saveLoading = false;
+        console.log('rejected');
+
+        if (action.error.message === 'Unauthorized.') {
+          toast.error('Вы неавторизованы.', {
+            position: toast.POSITION.TOP_RIGHT,
+          });
+        } else {
+          toast.error('Ошибка на сервере. Обратитесь к администратору.', {
+            position: toast.POSITION.TOP_RIGHT,
+          });
+        }
+      })
+      //purgeCategory
+      .addCase(purgeCategory.pending, () => {})
+      .addCase(purgeCategory.fulfilled, (state, action) => {
+        toast.info('Категория успешно очищена.', {
+          position: toast.POSITION.TOP_RIGHT,
+        });
+        console.log('fulfilled');
+      })
+      .addCase(purgeCategory.rejected, (state, action) => {
         console.log('rejected');
 
         if (action.error.message === 'Unauthorized.') {

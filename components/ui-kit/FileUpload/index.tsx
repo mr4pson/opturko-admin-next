@@ -18,7 +18,8 @@ type Props = {
   field?: FieldInputProps<any>;
   form?: FormikProps<any>;
   meta?: FieldMetaProps<any>;
-  onChange?: (files: File[]) => void;
+  type?: 'File' | 'Image';
+  onChange?: (files: string) => void;
 };
 const FileUpload: React.FC<Props & TFormFieldProps> = ({
   hasError = false,
@@ -27,6 +28,7 @@ const FileUpload: React.FC<Props & TFormFieldProps> = ({
   description,
   field,
   form,
+  type = 'Image',
   onChange,
 }) => {
   const { getRootProps, getInputProps, acceptedFiles } = useDropzone({});
@@ -65,7 +67,7 @@ const FileUpload: React.FC<Props & TFormFieldProps> = ({
         <FileUploadContent>
           <UploadSVG />
           <UploadAllowedTypes>
-            PNG, GIF, WEBP, MP4 or MP3. Max 1Gb.
+            {type === 'File' ? 'CSV. Max 1Gb.' : 'PNG, GIF, WEBP, MP4 or MP3. Max 1Gb.'}
           </UploadAllowedTypes>
         </FileUploadContent>
         <FilesWrapper>

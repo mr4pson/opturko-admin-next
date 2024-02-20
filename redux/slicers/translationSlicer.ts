@@ -13,11 +13,19 @@ export const fetchTranslation = createAsyncThunk<
   return await TranslationsService.getTranslations();
 });
 
+export const initTranslation = createAsyncThunk<
+  Translation,
+  undefined,
+  { rejectValue: string }
+>('translations/initTranslation', async function () {
+  return await TranslationsService.initTranslation();
+});
+
 export const updateTranslation = createAsyncThunk<
   Translation,
   Translation,
   { rejectValue: string }
->('translations/fetchTranslation', async function (payload) {
+>('translations/updateTranslation', async function (payload) {
   return await TranslationsService.updateTranslation(payload);
 });
 
@@ -45,6 +53,26 @@ const translationSlicer = createSlice({
         console.log('fulfilled');
       })
       .addCase(fetchTranslation.rejected, (state, action) => {
+        state.loading = false;
+        if (action.error.message === 'Unauthorized.') {
+          toast.error('Вы неавторизованы.', {
+            position: toast.POSITION.TOP_RIGHT,
+          });
+        } else {
+          toast.error('Ошибка на сервере. Обратитесь к администратору.', {
+            position: toast.POSITION.TOP_RIGHT,
+          });
+        }
+        console.log('rejected');
+      })
+      //initTranslation
+      .addCase(initTranslation.pending, handlePending)
+      .addCase(initTranslation.fulfilled, (state, action) => {
+        state.translation = action.payload;
+        state.loading = false;
+        console.log('fulfilled');
+      })
+      .addCase(initTranslation.rejected, (state, action) => {
         state.loading = false;
         if (action.error.message === 'Unauthorized.') {
           toast.error('Вы неавторизованы.', {

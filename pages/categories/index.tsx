@@ -4,11 +4,14 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { COLUMNS } from '../../components/categories/constants';
 import {
-  handleClose,
-  handleConfirm,
+  handleDeleteCategoryClose,
+  handleDeleteCategoryConfirm,
   handleCreateClick,
-  handleDeleteClick,
+  handleDeleteCategoryClick,
   handleChangeClick,
+  handlePurgeCategoryClick,
+  handlePurgeCategoryClose,
+  handlePurgeCategoryConfirm,
 } from '../../components/categories/helpers';
 import { PageTitle } from '../../components/common';
 import AdminLayout from '../../components/layouts/admin';
@@ -29,6 +32,8 @@ const CategoriesPage = (): JSX.Element => {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const [curCategory, setCurCategory] = useState<Category | null>(null);
+  const [isPurgeCategoryOpen, setIsPurgeCategoryOpen] = useState<Boolean>(false);
+  const [isDeleteCategoryOpen, setIsDeleteCategoryOpen] = useState<Boolean>(false);
   const { categories, loading } = useAppSelector<TCategoriesState>(
     (state) => state.categories,
   );
@@ -71,8 +76,11 @@ const CategoriesPage = (): JSX.Element => {
             <LinkItem onClick={handleChangeClick(category.id, router)}>
               Редактировать
             </LinkItem>
-            <LinkItem onClick={handleDeleteClick(category, setCurCategory)}>
+            <LinkItem onClick={handleDeleteCategoryClick(category, setIsDeleteCategoryOpen, setCurCategory)}>
               Удалить
+            </LinkItem>
+            <LinkItem onClick={handlePurgeCategoryClick(category, setIsPurgeCategoryOpen, setCurCategory)}>
+              Отчистить
             </LinkItem>
           </>
         )}
@@ -83,10 +91,21 @@ const CategoriesPage = (): JSX.Element => {
         hasFooter={true}
         confirmBtnName={'Выполнить'}
         cancelBtnName={'Отмена'}
-        onConfirm={handleConfirm(curCategory, router, dispatch, setCurCategory)}
-        onClose={handleClose(setCurCategory)}
+        onConfirm={handleDeleteCategoryConfirm(curCategory, router, dispatch, setCurCategory, setIsDeleteCategoryOpen)}
+        onClose={handleDeleteCategoryClose(setCurCategory, setIsDeleteCategoryOpen)}
       >
         <div>Вы уверены, что хотите удалить категорию №{curCategory?.id}?</div>
+      </Modal>
+      <Modal
+        title="Удаление товаров в категории"
+        open={!!curCategory}
+        hasFooter={true}
+        confirmBtnName={'Удалить'}
+        cancelBtnName={'Отмена'}
+        onConfirm={handlePurgeCategoryConfirm(curCategory, router, dispatch, setCurCategory, setIsPurgeCategoryOpen)}
+        onClose={handlePurgeCategoryClose(setCurCategory, setIsPurgeCategoryOpen)}
+      >
+        <div>Вы уверены, что хотите удалить товары в категории №{curCategory?.id}?</div>
       </Modal>
     </>
   );
